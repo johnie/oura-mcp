@@ -1,6 +1,6 @@
 # oura-mcp
 
-An MCP server for [oura.io](https://ouraring.com/).
+An MCP server for [ouraring.com](https://ouraring.com/).
 
 ## Usage
 
