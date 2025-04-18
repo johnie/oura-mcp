@@ -1,30 +1,32 @@
 {
-  "name": "oura-mcp",
-  "version": "0.0.2",
-  "description": "An MCP server for Oura Ring",
-  "bin": "./cli.js",
-  "files": [
-    "dist",
-    "/cli.js"
-  ],
-  "scripts": {
-    "build": "bun build src/index.ts --packages external --outdir dist --target node",
-    "prepublishOnly": "npm run build"
-  },
-  "type": "module",
-  "devDependencies": {
-    "@types/bun": "latest",
-    "@types/js-yaml": "^4.0.9",
-    "@types/polka": "^0.5.7",
-    "typescript": "^5"
-  },
-  "dependencies": {
-    "@chatmcp/sdk": "^1.0.6",
-    "@modelcontextprotocol/sdk": "^1.10.0",
-    "cac": "^6.7.14",
-    "got": "^14.4.7",
-    "js-yaml": "^4.1.0",
-    "polka": "^0.5.2",
-    "zod": "^3.24.3"
-  }
+    "name": "oura-mcp",
+    "version": "0.0.2",
+    "description": "An MCP server for Oura Ring",
+    "bin": "./cli.js",
+    "files": [
+        "dist",
+        "/cli.js"
+    ],
+    "scripts": {
+        "build": "bun build src/index.ts --packages external --outdir dist --target node",
+        "prepublishOnly": "npm run build",
+        "format": "biome format --write ./src"
+    },
+    "type": "module",
+    "devDependencies": {
+        "@biomejs/biome": "1.9.4",
+        "@types/bun": "latest",
+        "@types/js-yaml": "^4.0.9",
+        "@types/polka": "^0.5.7",
+        "typescript": "^5"
+    },
+    "dependencies": {
+        "@chatmcp/sdk": "^1.0.6",
+        "@modelcontextprotocol/sdk": "^1.10.0",
+        "cac": "^6.7.14",
+        "got": "^14.4.7",
+        "js-yaml": "^4.1.0",
+        "polka": "^0.5.2",
+        "zod": "^3.24.3"
+    }
 }
