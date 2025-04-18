@@ -4,7 +4,7 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { RestServerTransport } from '@chatmcp/sdk/server/rest.js';
 import { version } from '../package.json';
-import { Raindrop } from './oura';
+import { Oura, GeneralOuraSchema } from './oura';
 import { dump } from 'js-yaml';
 import { errorToToolResult } from './utils';
 
@@ -18,14 +18,14 @@ const server = new McpServer(
       logging: {},
       tools: {},
     },
-  },
+  }
 );
 
 if (!process.env.OURA_ACCESS_TOKEN) {
   throw new Error(`OURA_ACCESS_TOKEN is not set`);
 }
 
-const raindrop = new Raindrop(process.env.OURA_ACCESS_TOKEN);
+const oura = new Oura(process.env.OURA_ACCESS_TOKEN);
 
 server.tool(
   'get_personal_info',
@@ -33,7 +33,7 @@ server.tool(
   {},
   async () => {
     try {
-      const res = await raindrop.getPersonalInfo();
+      const res = await oura.getPersonalInfo();
       return {
         content: [
           {
@@ -45,15 +45,37 @@ server.tool(
     } catch (error) {
       return errorToToolResult(error);
     }
-  },
+  }
 );
+
+server.tool(
+  'get_daily_activity',
+  'Get daily activity from Oura',
+  GeneralOuraSchema,
+  async (args) => {
+    try {
+      const res = await oura.getDailyActivity(args);
+      return {
+        content: [
+          {
+            type: 'text',
+            text: dump(res),
+          },
+        ],
+      };
+    } catch (error) {
+      return errorToToolResult(error);
+    }
+  }
+);
+
 const port = Number(process.env.PORT || '3000');
 
 export async function startServer(
   options:
     | { type: 'http'; endpoint: string }
     | { type: 'sse' }
-    | { type: 'stdio' },
+    | { type: 'stdio' }
 ) {
   if (options.type === 'http') {
     const transport = new RestServerTransport({
