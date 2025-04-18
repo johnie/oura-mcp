@@ -1,15 +1,46 @@
 # oura-mcp
 
-To install dependencies:
+An MCP server for [oura.io](https://ouraring.com/).
 
-```bash
-bun install
+## Usage
+
+Create an access token on [cloud.ouraring.com](https://cloud.ouraring.com/personal-access-tokens):
+
+1. create a personal access token
+2. copy the token
+
+JSON config for `oura-mcp` as `stdio` server:
+
+```json
+{
+  "mcpServers": {
+    "oura": {
+      "command": "bunx",
+      "args": ["-y", "oura-mcp"],
+      "env": {
+        "oura_ACCESS_TOKEN": "<your-token>"
+      }
+    }
+  }
+}
 ```
 
-To run:
+Alternatively you can run it as:
 
-```bash
-bun run index.ts
-```
+- sse server: `npx -y oura-mcp --sse`
+- streamable http server: `npx -y oura-mcp --http`
 
-This project was created using `bun init` in bun v1.2.7. [Bun](https://bun.sh) is a fast all-in-one JavaScript runtime.
+## Capabilities
+
+- Get Personal Info
+- Get Daily Activity
+- Get Daily Cardiovascular Age
+- Get Daily Sleep
+- Get Daily SpO2
+- Get Daily Stress
+- Get HeartRate`
+
+
+## License
+
+MIT.
