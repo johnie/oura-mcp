@@ -69,6 +69,111 @@ server.tool(
   }
 );
 
+server.tool(
+  'get_daily_cardiovascular_age',
+  'Get daily cardiovascular age from Oura',
+  GeneralOuraSchema,
+  async (args) => {
+    try {
+      const res = await oura.getDailyCardiovascularAge(args);
+      return {
+        content: [
+          {
+            type: 'text',
+            text: dump(res),
+          },
+        ],
+      };
+    } catch (error) {
+      return errorToToolResult(error);
+    }
+  }
+);
+
+server.tool(
+  'get_daily_sleep',
+  'Get daily sleep from Oura',
+  GeneralOuraSchema,
+  async (args) => {
+    try {
+      const res = await oura.getDailySleep(args);
+      return {
+        content: [
+          {
+            type: 'text',
+            text: dump(res),
+          },
+        ],
+      };
+    } catch (error) {
+      return errorToToolResult(error);
+    }
+  }
+);
+
+server.tool(
+  'get_daily_spo2',
+  'Get daily SPO2 from Oura',
+  GeneralOuraSchema,
+  async (args) => {
+    try {
+      const res = await oura.getDailySpo2(args);
+      return {
+        content: [
+          {
+            type: 'text',
+            text: dump(res),
+          },
+        ],
+      };
+    } catch (error) {
+      return errorToToolResult(error);
+    }
+  }
+);
+
+server.tool(
+  'get_daily_stress',
+  'Get daily stress from Oura',
+  GeneralOuraSchema,
+  async (args) => {
+    try {
+      const res = await oura.getDailyStress(args);
+      return {
+        content: [
+          {
+            type: 'text',
+            text: dump(res),
+          },
+        ],
+      };
+    } catch (error) {
+      return errorToToolResult(error);
+    }
+  }
+);
+
+server.tool(
+  'get_heartrate',
+  'Get heartrate from Oura',
+  GeneralOuraSchema,
+  async (args) => {
+    try {
+      const res = await oura.getHeartrate(args);
+      return {
+        content: [
+          {
+            type: 'text',
+            text: dump(res),
+          },
+        ],
+      };
+    } catch (error) {
+      return errorToToolResult(error);
+    }
+  }
+);
+
 const port = Number(process.env.PORT || '3000');
 
 export async function startServer(
