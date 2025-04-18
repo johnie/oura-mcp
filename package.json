@@ -1,6 +1,6 @@
 {
     "name": "oura-mcp",
-    "version": "0.0.3",
+    "version": "0.0.4",
     "description": "An MCP server for Oura Ring",
     "bin": "./cli.js",
     "files": [
