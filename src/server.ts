@@ -18,7 +18,7 @@ const server = new McpServer(
       logging: {},
       tools: {},
     },
-  }
+  },
 );
 
 if (!process.env.OURA_ACCESS_TOKEN) {
@@ -45,7 +45,7 @@ server.tool(
     } catch (error) {
       return errorToToolResult(error);
     }
-  }
+  },
 );
 const port = Number(process.env.PORT || '3000');
 
@@ -53,7 +53,7 @@ export async function startServer(
   options:
     | { type: 'http'; endpoint: string }
     | { type: 'sse' }
-    | { type: 'stdio' }
+    | { type: 'stdio' },
 ) {
   if (options.type === 'http') {
     const transport = new RestServerTransport({

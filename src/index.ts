@@ -16,8 +16,8 @@ cli
             endpoint: typeof flags.http === 'string' ? flags.http : '/mcp',
           }
         : flags.sse
-        ? { type: 'sse' }
-        : { type: 'stdio' }
+          ? { type: 'sse' }
+          : { type: 'stdio' },
     );
   });
 

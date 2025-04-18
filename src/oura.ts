@@ -20,7 +20,7 @@ export class Raindrop {
 
     if (!res.ok) {
       throw new Error(
-        `Failed to get personal info: ${res.statusCode}\n${res.body}`
+        `Failed to get personal info: ${res.statusCode}\n${res.body}`,
       );
     }
 
