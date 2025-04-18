@@ -54,4 +54,84 @@ export class Oura {
 
     return json;
   }
+
+  async getDailyCardiovascularAge(searchParams: GeneralOuraOptions) {
+    const request = this.got.get('usercollection/daily_cardiovascular_age', {
+      searchParams,
+    });
+
+    const [res, json] = await Promise.all([request, request.json()]);
+
+    if (!res.ok) {
+      throw new Error(
+        `Failed to get daily cardiovascular age: ${res.statusCode}\n${res.body}`
+      );
+    }
+
+    return json;
+  }
+
+  async getDailySleep(searchParams: GeneralOuraOptions) {
+    const request = this.got.get('usercollection/daily_sleep', {
+      searchParams,
+    });
+
+    const [res, json] = await Promise.all([request, request.json()]);
+
+    if (!res.ok) {
+      throw new Error(
+        `Failed to get daily sleep: ${res.statusCode}\n${res.body}`
+      );
+    }
+
+    return json;
+  }
+
+  async getDailySpo2(searchParams: GeneralOuraOptions) {
+    const request = this.got.get('usercollection/daily_spo2', {
+      searchParams,
+    });
+
+    const [res, json] = await Promise.all([request, request.json()]);
+
+    if (!res.ok) {
+      throw new Error(
+        `Failed to get daily spo2: ${res.statusCode}\n${res.body}`
+      );
+    }
+
+    return json;
+  }
+
+  async getDailyStress(searchParams: GeneralOuraOptions) {
+    const request = this.got.get('usercollection/daily_stress', {
+      searchParams,
+    });
+
+    const [res, json] = await Promise.all([request, request.json()]);
+
+    if (!res.ok) {
+      throw new Error(
+        `Failed to get daily stress: ${res.statusCode}\n${res.body}`
+      );
+    }
+
+    return json;
+  }
+
+  async getHeartrate(searchParams: GeneralOuraOptions) {
+    const request = this.got.get('usercollection/heartrate', {
+      searchParams,
+    });
+
+    const [res, json] = await Promise.all([request, request.json()]);
+
+    if (!res.ok) {
+      throw new Error(
+        `Failed to get heartrate: ${res.statusCode}\n${res.body}`
+      );
+    }
+
+    return json;
+  }
 }
