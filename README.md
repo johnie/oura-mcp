@@ -15,7 +15,7 @@ JSON config for `oura-mcp` as `stdio` server:
 {
   "mcpServers": {
     "oura": {
-      "command": "bunx",
+      "command": "npx",
       "args": ["-y", "oura-mcp"],
       "env": {
         "oura_ACCESS_TOKEN": "<your-token>"
@@ -38,7 +38,7 @@ Alternatively you can run it as:
 - Get Daily Sleep
 - Get Daily SpO2
 - Get Daily Stress
-- Get HeartRate`
+- Get HeartRate
 
 
 ## License
