@@ -4,9 +4,10 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { RestServerTransport } from '@chatmcp/sdk/server/rest.js';
 import { version } from '../package.json';
-import { Oura, GeneralOuraSchema } from './oura';
+import { Oura, GeneralOuraSchema } from '@/oura';
 import { dump } from 'js-yaml';
-import { errorToToolResult } from './utils';
+import { errorToToolResult } from '@/utils';
+import { z } from 'zod/v3';
 
 const server = new McpServer(
   {
@@ -21,16 +22,18 @@ const server = new McpServer(
   }
 );
 
-if (!process.env.OURA_ACCESS_TOKEN) {
-  throw new Error(`OURA_ACCESS_TOKEN is not set`);
-}
+// if (!process.env.OURA_ACCESS_TOKEN) {
+//   throw new Error(`OURA_ACCESS_TOKEN is not set`);
+// }
 
-const oura = new Oura(process.env.OURA_ACCESS_TOKEN);
+const oura = new Oura('5E4THDOC2THCH6OYEWBYV62TZMW6HPTF');
 
-server.tool(
+server.registerTool(
   'get_personal_info',
-  'Get personal info from Oura',
-  {},
+  {
+    title: 'Oura: Get Personal Info',
+    description: 'Get personal info from Oura',
+  },
   async () => {
     try {
       const res = await oura.getPersonalInfo();
@@ -48,10 +51,13 @@ server.tool(
   }
 );
 
-server.tool(
+server.registerTool(
   'get_daily_activity',
-  'Get daily activity from Oura',
-  GeneralOuraSchema,
+  {
+    title: 'Oura: Get Daily Activity',
+    description: 'Get daily activity from Oura',
+    inputSchema: GeneralOuraSchema,
+  },
   async (args) => {
     try {
       const res = await oura.getDailyActivity(args);
@@ -69,10 +75,13 @@ server.tool(
   }
 );
 
-server.tool(
+server.registerTool(
   'get_daily_cardiovascular_age',
-  'Get daily cardiovascular age from Oura',
-  GeneralOuraSchema,
+  {
+    title: 'Oura: Get Daily Cardiovascular Age',
+    description: 'Get daily cardiovascular age from Oura',
+    inputSchema: GeneralOuraSchema,
+  },
   async (args) => {
     try {
       const res = await oura.getDailyCardiovascularAge(args);
@@ -90,10 +99,14 @@ server.tool(
   }
 );
 
-server.tool(
+server.registerTool(
   'get_daily_sleep',
-  'Get daily sleep from Oura',
-  GeneralOuraSchema,
+
+  {
+    title: 'Oura: Get Daily Sleep',
+    description: 'Get daily sleep from Oura',
+    inputSchema: GeneralOuraSchema,
+  },
   async (args) => {
     try {
       const res = await oura.getDailySleep(args);
@@ -111,10 +124,13 @@ server.tool(
   }
 );
 
-server.tool(
+server.registerTool(
   'get_daily_spo2',
-  'Get daily SPO2 from Oura',
-  GeneralOuraSchema,
+  {
+    title: 'Oura: Get Daily SPO2',
+    description: 'Get daily SPO2 from Oura',
+    inputSchema: GeneralOuraSchema,
+  },
   async (args) => {
     try {
       const res = await oura.getDailySpo2(args);
@@ -132,10 +148,13 @@ server.tool(
   }
 );
 
-server.tool(
+server.registerTool(
   'get_daily_stress',
-  'Get daily stress from Oura',
-  GeneralOuraSchema,
+  {
+    title: 'Oura: Get Daily Stress',
+    description: 'Get daily stress from Oura',
+    inputSchema: GeneralOuraSchema,
+  },
   async (args) => {
     try {
       const res = await oura.getDailyStress(args);
@@ -153,10 +172,13 @@ server.tool(
   }
 );
 
-server.tool(
+server.registerTool(
   'get_heartrate',
-  'Get heartrate from Oura',
-  GeneralOuraSchema,
+  {
+    title: 'Oura: Get Heartrate',
+    description: 'Get heartrate from Oura',
+    inputSchema: GeneralOuraSchema,
+  },
   async (args) => {
     try {
       const res = await oura.getHeartrate(args);

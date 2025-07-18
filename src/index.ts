@@ -1,6 +1,6 @@
 import { cac } from 'cac';
 import { version } from '../package.json';
-import { startServer } from './server';
+import { startServer } from '@/server';
 
 const cli = cac(`fetch-mcp`);
 

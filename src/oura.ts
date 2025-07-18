@@ -1,11 +1,13 @@
 import { got, type Got } from 'got';
-import { z } from 'zod';
+import { z } from 'zod/v3';
 
 export const GeneralOuraSchema = {
-  start_date: z.string().datetime().describe('Start date to fetch data'),
+  start_date: z
+    .string()
+    .default(new Date().toISOString())
+    .describe('Start date to fetch data'),
   end_date: z
     .string()
-    .datetime()
     .default(new Date().toISOString())
     .describe('End date to fetch data'),
   next_token: z.string().optional().describe('Next token to fetch next page'),
