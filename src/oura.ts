@@ -1,17 +1,17 @@
 import { got, type Got } from 'got';
 import { z } from 'zod';
 
-export const GeneralOuraSchema = {
-  start_date: z.string().datetime().describe('Start date to fetch data'),
+export const GeneralOuraSchemaShape = {
+  start_date: z.string().describe('Start date to fetch data'),
   end_date: z
     .string()
-    .datetime()
     .default(new Date().toISOString())
     .describe('End date to fetch data'),
   next_token: z.string().optional().describe('Next token to fetch next page'),
 };
 
-type GeneralOuraOptions = z.infer<z.ZodObject<typeof GeneralOuraSchema>>;
+export const GeneralOuraSchema = z.object(GeneralOuraSchemaShape);
+export type GeneralOuraOptions = z.infer<typeof GeneralOuraSchema>;
 
 export class Oura {
   got: Got;
