@@ -4,22 +4,15 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { RestServerTransport } from '@chatmcp/sdk/server/rest.js';
 import { version } from '../package.json';
-import { Oura, GeneralOuraSchema } from './oura';
+import { Oura, GeneralOuraSchemaShape } from './oura';
 import { dump } from 'js-yaml';
 import { errorToToolResult } from './utils';
+import { z } from 'zod';
 
-const server = new McpServer(
-  {
-    name: 'oura-mcp',
-    version,
-  },
-  {
-    capabilities: {
-      logging: {},
-      tools: {},
-    },
-  }
-);
+const server = new McpServer({
+  name: 'oura-mcp',
+  version,
+});
 
 if (!process.env.OURA_ACCESS_TOKEN) {
   throw new Error(`OURA_ACCESS_TOKEN is not set`);
@@ -27,10 +20,12 @@ if (!process.env.OURA_ACCESS_TOKEN) {
 
 const oura = new Oura(process.env.OURA_ACCESS_TOKEN);
 
-server.tool(
+server.registerTool(
   'get_personal_info',
-  'Get personal info from Oura',
-  {},
+  {
+    title: 'Get personal info from Oura',
+    description: 'Get personal info from Oura',
+  },
   async () => {
     try {
       const res = await oura.getPersonalInfo();
@@ -48,10 +43,13 @@ server.tool(
   }
 );
 
-server.tool(
+server.registerTool(
   'get_daily_activity',
-  'Get daily activity from Oura',
-  GeneralOuraSchema,
+  {
+    title: 'Get daily activity from Oura',
+    description: 'Get daily activity from Oura',
+    inputSchema: GeneralOuraSchemaShape,
+  },
   async (args) => {
     try {
       const res = await oura.getDailyActivity(args);
@@ -69,10 +67,13 @@ server.tool(
   }
 );
 
-server.tool(
+server.registerTool(
   'get_daily_cardiovascular_age',
-  'Get daily cardiovascular age from Oura',
-  GeneralOuraSchema,
+  {
+    title: 'Get daily cardiovascular age from Oura',
+    description: 'Get daily cardiovascular age from Oura',
+    inputSchema: GeneralOuraSchemaShape,
+  },
   async (args) => {
     try {
       const res = await oura.getDailyCardiovascularAge(args);
@@ -90,10 +91,13 @@ server.tool(
   }
 );
 
-server.tool(
+server.registerTool(
   'get_daily_sleep',
-  'Get daily sleep from Oura',
-  GeneralOuraSchema,
+  {
+    title: 'Get daily sleep from Oura',
+    description: 'Get daily sleep from Oura',
+    inputSchema: GeneralOuraSchemaShape,
+  },
   async (args) => {
     try {
       const res = await oura.getDailySleep(args);
@@ -111,10 +115,13 @@ server.tool(
   }
 );
 
-server.tool(
+server.registerTool(
   'get_daily_spo2',
-  'Get daily SPO2 from Oura',
-  GeneralOuraSchema,
+  {
+    title: 'Get daily SPO2 from Oura',
+    description: 'Get daily SPO2 from Oura',
+    inputSchema: GeneralOuraSchemaShape,
+  },
   async (args) => {
     try {
       const res = await oura.getDailySpo2(args);
@@ -132,10 +139,13 @@ server.tool(
   }
 );
 
-server.tool(
+server.registerTool(
   'get_daily_stress',
-  'Get daily stress from Oura',
-  GeneralOuraSchema,
+  {
+    title: 'Get daily stress from Oura',
+    description: 'Get daily stress from Oura',
+    inputSchema: GeneralOuraSchemaShape,
+  },
   async (args) => {
     try {
       const res = await oura.getDailyStress(args);
@@ -153,10 +163,13 @@ server.tool(
   }
 );
 
-server.tool(
+server.registerTool(
   'get_heartrate',
-  'Get heartrate from Oura',
-  GeneralOuraSchema,
+  {
+    title: 'Get heartrate from Oura',
+    description: 'Get heartrate from Oura',
+    inputSchema: GeneralOuraSchemaShape,
+  },
   async (args) => {
     try {
       const res = await oura.getHeartrate(args);
@@ -195,8 +208,7 @@ export async function startServer(
 
     const app = Polka();
 
-    app.get('/sse', async (req, res) => {
-      console.log(req);
+    app.get('/sse', async (_req, res) => {
       const transport = new SSEServerTransport('/messages', res);
       transports.set(transport.sessionId, transport);
       res.on('close', () => {
@@ -206,7 +218,11 @@ export async function startServer(
     });
 
     app.post('/messages', async (req, res) => {
-      const sessionId = req.query.sessionId as string;
+      const sessionId = req.query.sessionId as string | undefined;
+      if (!sessionId) {
+        res.status(400).send('Missing sessionId');
+        return;
+      }
       const transport = transports.get(sessionId);
       if (transport) {
         await transport.handlePostMessage(req, res);
