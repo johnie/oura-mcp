@@ -7,6 +7,7 @@ import { version } from '../package.json';
 import { Oura, GeneralOuraSchema } from './oura';
 import { dump } from 'js-yaml';
 import { errorToToolResult } from './utils';
+import { z } from 'zod';
 
 const server = new McpServer(
   {
@@ -30,7 +31,7 @@ const oura = new Oura(process.env.OURA_ACCESS_TOKEN);
 server.tool(
   'get_personal_info',
   'Get personal info from Oura',
-  {},
+  z.object({}),
   async () => {
     try {
       const res = await oura.getPersonalInfo();
@@ -195,8 +196,7 @@ export async function startServer(
 
     const app = Polka();
 
-    app.get('/sse', async (req, res) => {
-      console.log(req);
+    app.get('/sse', async (_req, res) => {
       const transport = new SSEServerTransport('/messages', res);
       transports.set(transport.sessionId, transport);
       res.on('close', () => {
@@ -206,7 +206,11 @@ export async function startServer(
     });
 
     app.post('/messages', async (req, res) => {
-      const sessionId = req.query.sessionId as string;
+      const sessionId = req.query.sessionId as string | undefined;
+      if (!sessionId) {
+        res.status(400).send('Missing sessionId');
+        return;
+      }
       const transport = transports.get(sessionId);
       if (transport) {
         await transport.handlePostMessage(req, res);
