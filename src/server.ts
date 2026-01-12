@@ -30,7 +30,7 @@ if (!process.env.OURA_ACCESS_TOKEN) {
 const oura = new Oura(process.env.OURA_ACCESS_TOKEN);
 
 server.registerTool(
-  'get_personal_info',
+  'oura_get_personal_info',
   {
     title: 'Get personal info from Oura',
     description: 'Get personal info from Oura',
@@ -57,7 +57,7 @@ server.registerTool(
 );
 
 server.registerTool(
-  'get_daily_activity',
+  'oura_get_daily_activity',
   {
     title: 'Get daily activity from Oura',
     description: 'Get daily activity from Oura',
@@ -81,7 +81,7 @@ server.registerTool(
 );
 
 server.registerTool(
-  'get_daily_cardiovascular_age',
+  'oura_get_daily_cardiovascular_age',
   {
     title: 'Get daily cardiovascular age from Oura',
     description: 'Get daily cardiovascular age from Oura',
@@ -105,7 +105,7 @@ server.registerTool(
 );
 
 server.registerTool(
-  'get_daily_sleep',
+  'oura_get_daily_sleep',
   {
     title: 'Get daily sleep from Oura',
     description: 'Get daily sleep from Oura',
@@ -129,7 +129,7 @@ server.registerTool(
 );
 
 server.registerTool(
-  'get_daily_spo2',
+  'oura_get_daily_spo2',
   {
     title: 'Get daily SPO2 from Oura',
     description: 'Get daily SPO2 from Oura',
@@ -153,7 +153,7 @@ server.registerTool(
 );
 
 server.registerTool(
-  'get_daily_stress',
+  'oura_get_daily_stress',
   {
     title: 'Get daily stress from Oura',
     description: 'Get daily stress from Oura',
@@ -177,7 +177,7 @@ server.registerTool(
 );
 
 server.registerTool(
-  'get_heartrate',
+  'oura_get_heartrate',
   {
     title: 'Get heartrate from Oura',
     description: 'Get heartrate from Oura',
