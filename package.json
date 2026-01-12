@@ -1,27 +1,28 @@
 {
-    "name": "oura-mcp",
-    "version": "0.0.5",
-    "description": "An MCP server for Oura Ring",
-    "bin": "./cli.js",
-    "files": [
-        "dist",
-        "/cli.js"
-    ],
-    "scripts": {
-        "build": "bun build src/index.ts --packages external --outdir dist --target node",
-        "prepublishOnly": "npm run build",
-        "format": "biome format --write ./src"
-    },
-    "type": "module",
-    "devDependencies": {
-        "@biomejs/biome": "2.3.11",
-        "@types/bun": "latest",
-        "typescript": "^5"
-    },
-    "dependencies": {
-        "@modelcontextprotocol/sdk": "^1.25.2",
-        "cac": "^6.7.14",
-        "got": "^14.6.6",
-        "zod": "4"
-    }
+  "name": "oura-mcp",
+  "version": "0.0.5",
+  "description": "An MCP server for Oura Ring",
+  "bin": "./cli.js",
+  "files": [
+    "dist",
+    "/cli.js"
+  ],
+  "scripts": {
+    "build": "bun build src/index.ts --packages external --outdir dist --target node",
+    "prepublishOnly": "npm run build",
+    "format": "biome format --write ./src",
+    "check": "biome check"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@biomejs/biome": "2.3.11",
+    "@types/bun": "latest",
+    "typescript": "^5"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.25.2",
+    "cac": "^6.7.14",
+    "got": "^14.6.6",
+    "zod": "4"
+  }
 }
