@@ -29,6 +29,14 @@ if (!process.env.OURA_ACCESS_TOKEN) {
 
 const oura = new Oura(process.env.OURA_ACCESS_TOKEN);
 
+// Standard annotations for read-only Oura data tools
+const readOnlyAnnotations = {
+  readOnlyHint: true,
+  destructiveHint: false,
+  idempotentHint: true,
+  openWorldHint: true,
+};
+
 server.registerTool(
   'oura_get_personal_info',
   {
@@ -37,6 +45,7 @@ server.registerTool(
     inputSchema: {
       response_format: responseFormatSchema,
     },
+    annotations: readOnlyAnnotations,
   },
   async (args) => {
     try {
@@ -62,6 +71,7 @@ server.registerTool(
     title: 'Get daily activity from Oura',
     description: 'Get daily activity from Oura',
     inputSchema: GeneralOuraSchemaShape,
+    annotations: readOnlyAnnotations,
   },
   async (args) => {
     try {
@@ -86,6 +96,7 @@ server.registerTool(
     title: 'Get daily cardiovascular age from Oura',
     description: 'Get daily cardiovascular age from Oura',
     inputSchema: GeneralOuraSchemaShape,
+    annotations: readOnlyAnnotations,
   },
   async (args) => {
     try {
@@ -110,6 +121,7 @@ server.registerTool(
     title: 'Get daily sleep from Oura',
     description: 'Get daily sleep from Oura',
     inputSchema: GeneralOuraSchemaShape,
+    annotations: readOnlyAnnotations,
   },
   async (args) => {
     try {
@@ -134,6 +146,7 @@ server.registerTool(
     title: 'Get daily SPO2 from Oura',
     description: 'Get daily SPO2 from Oura',
     inputSchema: GeneralOuraSchemaShape,
+    annotations: readOnlyAnnotations,
   },
   async (args) => {
     try {
@@ -158,6 +171,7 @@ server.registerTool(
     title: 'Get daily stress from Oura',
     description: 'Get daily stress from Oura',
     inputSchema: GeneralOuraSchemaShape,
+    annotations: readOnlyAnnotations,
   },
   async (args) => {
     try {
@@ -182,6 +196,7 @@ server.registerTool(
     title: 'Get heartrate from Oura',
     description: 'Get heartrate from Oura',
     inputSchema: GeneralOuraSchemaShape,
+    annotations: readOnlyAnnotations,
   },
   async (args) => {
     try {
