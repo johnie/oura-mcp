@@ -1,5 +1,6 @@
 import { got, type Got } from 'got';
 import { z } from 'zod';
+import { responseFormatSchema } from './formatters';
 
 // Date format regex for YYYY-MM-DD validation
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -25,6 +26,7 @@ export const GeneralOuraSchemaShape = {
     .default(DEFAULT_LIMIT)
     .describe(`Maximum number of results to return (default: ${DEFAULT_LIMIT}, max: 200)`),
   next_token: z.string().optional().describe('Next token to fetch next page'),
+  response_format: responseFormatSchema,
 };
 
 export const GeneralOuraSchema = z.object(GeneralOuraSchemaShape);
