@@ -6,7 +6,7 @@ import { RestServerTransport } from '@chatmcp/sdk/server/rest.js';
 import { version } from '../package.json';
 import { Oura, GeneralOuraSchemaShape } from './oura';
 import { dump } from 'js-yaml';
-import { errorToToolResult } from './utils';
+import { errorToToolResult, truncateResponse } from './utils';
 import { z } from 'zod';
 
 const server = new McpServer({
@@ -33,7 +33,7 @@ server.registerTool(
         content: [
           {
             type: 'text',
-            text: dump(res),
+            text: truncateResponse(dump(res)),
           },
         ],
       };
@@ -57,7 +57,7 @@ server.registerTool(
         content: [
           {
             type: 'text',
-            text: dump(res),
+            text: truncateResponse(dump(res)),
           },
         ],
       };
@@ -81,7 +81,7 @@ server.registerTool(
         content: [
           {
             type: 'text',
-            text: dump(res),
+            text: truncateResponse(dump(res)),
           },
         ],
       };
@@ -105,7 +105,7 @@ server.registerTool(
         content: [
           {
             type: 'text',
-            text: dump(res),
+            text: truncateResponse(dump(res)),
           },
         ],
       };
@@ -129,7 +129,7 @@ server.registerTool(
         content: [
           {
             type: 'text',
-            text: dump(res),
+            text: truncateResponse(dump(res)),
           },
         ],
       };
@@ -153,7 +153,7 @@ server.registerTool(
         content: [
           {
             type: 'text',
-            text: dump(res),
+            text: truncateResponse(dump(res)),
           },
         ],
       };
@@ -177,7 +177,7 @@ server.registerTool(
         content: [
           {
             type: 'text',
-            text: dump(res),
+            text: truncateResponse(dump(res)),
           },
         ],
       };
