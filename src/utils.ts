@@ -23,15 +23,28 @@ export function formatError(error: unknown): string {
     return 'Error: Data not found. This could mean no data exists for the specified date range. Try a different date range or check if your Oura Ring has synced recently.';
   }
 
-  if (message.includes('429') || message.includes('Too Many Requests') || message.includes('Rate')) {
+  if (
+    message.includes('429') ||
+    message.includes('Too Many Requests') ||
+    message.includes('Rate')
+  ) {
     return 'Error: Rate limit exceeded. The Oura API limits requests. Please wait 60 seconds before trying again.';
   }
 
-  if (message.includes('500') || message.includes('502') || message.includes('503') || message.includes('504')) {
-    return 'Error: Oura API server error. This is a temporary issue on Oura\'s side. Please try again in a few minutes.';
+  if (
+    message.includes('500') ||
+    message.includes('502') ||
+    message.includes('503') ||
+    message.includes('504')
+  ) {
+    return "Error: Oura API server error. This is a temporary issue on Oura's side. Please try again in a few minutes.";
   }
 
-  if (message.includes('ECONNREFUSED') || message.includes('ENOTFOUND') || message.includes('ETIMEDOUT')) {
+  if (
+    message.includes('ECONNREFUSED') ||
+    message.includes('ENOTFOUND') ||
+    message.includes('ETIMEDOUT')
+  ) {
     return 'Error: Could not connect to Oura API. Please check your internet connection and try again.';
   }
 

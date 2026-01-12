@@ -1,18 +1,19 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { Oura, GeneralOuraOptions } from './oura';
-import { GeneralOuraSchemaShape } from './oura';
-import { errorToToolResult, truncateResponse } from './utils';
+import type { PersonalInfo } from './formatters';
 import {
-  ResponseFormat,
-  responseFormatSchema,
-  formatPersonalInfo,
-  formatDailyActivity,
   formatCardiovascularAge,
+  formatDailyActivity,
   formatDailySleep,
   formatDailySpo2,
   formatDailyStress,
   formatHeartrate,
+  formatPersonalInfo,
+  ResponseFormat,
+  responseFormatSchema,
 } from './formatters';
+import type { GeneralOuraOptions, Oura } from './oura';
+import { GeneralOuraSchemaShape } from './oura';
+import { errorToToolResult, truncateResponse } from './utils';
 
 // Standard annotations for read-only Oura data tools
 const readOnlyAnnotations = {
@@ -37,11 +38,7 @@ interface ToolDefinition {
  * Register a standard Oura data tool with the MCP server.
  * Handles common logic: error handling, formatting, truncation.
  */
-function registerOuraTool(
-  server: McpServer,
-  oura: Oura,
-  tool: ToolDefinition
-) {
+function registerOuraTool(server: McpServer, oura: Oura, tool: ToolDefinition) {
   server.registerTool(
     tool.name,
     {
@@ -64,7 +61,7 @@ function registerOuraTool(
       } catch (error) {
         return errorToToolResult(error);
       }
-    }
+    },
   );
 }
 
@@ -101,14 +98,16 @@ Use when: User asks about their Oura profile, account info, or personal metrics.
           content: [
             {
               type: 'text',
-              text: truncateResponse(formatPersonalInfo(res, format)),
+              text: truncateResponse(
+                formatPersonalInfo(res as PersonalInfo, format),
+              ),
             },
           ],
         };
       } catch (error) {
         return errorToToolResult(error);
       }
-    }
+    },
   );
 
   // Standard data tools using factory pattern
@@ -133,7 +132,7 @@ Args:
 
 Use when: User asks about daily activity, steps, calories, movement, or exercise patterns.`,
       method: oura.getDailyActivity,
-      formatter: formatDailyActivity,
+      formatter: formatDailyActivity as Formatter,
     },
     {
       name: 'oura_get_daily_cardiovascular_age',
@@ -154,7 +153,7 @@ Args:
 
 Use when: User asks about heart health, cardiovascular age, or vascular fitness.`,
       method: oura.getDailyCardiovascularAge,
-      formatter: formatCardiovascularAge,
+      formatter: formatCardiovascularAge as Formatter,
     },
     {
       name: 'oura_get_daily_sleep',
@@ -177,7 +176,7 @@ Args:
 
 Use when: User asks about sleep quality, sleep duration, sleep scores, or sleep patterns.`,
       method: oura.getDailySleep,
-      formatter: formatDailySleep,
+      formatter: formatDailySleep as Formatter,
     },
     {
       name: 'oura_get_daily_spo2',
@@ -198,7 +197,7 @@ Args:
 
 Use when: User asks about blood oxygen, SpO2 levels, or breathing during sleep.`,
       method: oura.getDailySpo2,
-      formatter: formatDailySpo2,
+      formatter: formatDailySpo2 as Formatter,
     },
     {
       name: 'oura_get_daily_stress',
@@ -221,7 +220,7 @@ Args:
 
 Use when: User asks about stress levels, recovery, or daily stress patterns.`,
       method: oura.getDailyStress,
-      formatter: formatDailyStress,
+      formatter: formatDailyStress as Formatter,
     },
     {
       name: 'oura_get_heartrate',
@@ -243,7 +242,7 @@ Args:
 
 Use when: User asks about heart rate, BPM, resting heart rate, or heart rate trends.`,
       method: oura.getHeartrate,
-      formatter: formatHeartrate,
+      formatter: formatHeartrate as Formatter,
     },
   ];
 

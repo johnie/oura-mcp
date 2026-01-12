@@ -1,4 +1,4 @@
-import { got, type Got } from 'got';
+import { type Got, got } from 'got';
 import { z } from 'zod';
 import { responseFormatSchema } from './formatters';
 
@@ -17,14 +17,18 @@ export const GeneralOuraSchemaShape = {
     .string()
     .regex(dateRegex, 'Date must be in YYYY-MM-DD format')
     .optional()
-    .describe('End date in YYYY-MM-DD format (defaults to today if not provided)'),
+    .describe(
+      'End date in YYYY-MM-DD format (defaults to today if not provided)',
+    ),
   limit: z
     .number()
     .int('Limit must be a whole number')
     .min(1, 'Limit must be at least 1')
     .max(200, 'Limit cannot exceed 200')
     .default(DEFAULT_LIMIT)
-    .describe(`Maximum number of results to return (default: ${DEFAULT_LIMIT}, max: 200)`),
+    .describe(
+      `Maximum number of results to return (default: ${DEFAULT_LIMIT}, max: 200)`,
+    ),
   next_token: z.string().optional().describe('Next token to fetch next page'),
   response_format: responseFormatSchema,
 };
@@ -34,11 +38,13 @@ export type GeneralOuraOptions = z.infer<typeof GeneralOuraSchema>;
 
 /** Get today's date in YYYY-MM-DD format */
 function getTodayDate(): string {
-  return new Date().toISOString().split('T')[0];
+  return new Date().toISOString().slice(0, 10);
 }
 
 /** Apply request-time defaults to search params */
-function withDefaults(params: GeneralOuraOptions): Record<string, string | number> {
+function withDefaults(
+  params: GeneralOuraOptions,
+): Record<string, string | number> {
   return {
     start_date: params.start_date,
     end_date: params.end_date ?? getTodayDate(),
@@ -66,7 +72,7 @@ export class Oura {
 
     if (!res.ok) {
       throw new Error(
-        `Failed to get personal info: ${res.statusCode}\n${res.body}`
+        `Failed to get personal info: ${res.statusCode}\n${res.body}`,
       );
     }
 
@@ -82,7 +88,7 @@ export class Oura {
 
     if (!res.ok) {
       throw new Error(
-        `Failed to get daily activity: ${res.statusCode}\n${res.body}`
+        `Failed to get daily activity: ${res.statusCode}\n${res.body}`,
       );
     }
 
@@ -98,7 +104,7 @@ export class Oura {
 
     if (!res.ok) {
       throw new Error(
-        `Failed to get daily cardiovascular age: ${res.statusCode}\n${res.body}`
+        `Failed to get daily cardiovascular age: ${res.statusCode}\n${res.body}`,
       );
     }
 
@@ -114,7 +120,7 @@ export class Oura {
 
     if (!res.ok) {
       throw new Error(
-        `Failed to get daily sleep: ${res.statusCode}\n${res.body}`
+        `Failed to get daily sleep: ${res.statusCode}\n${res.body}`,
       );
     }
 
@@ -130,7 +136,7 @@ export class Oura {
 
     if (!res.ok) {
       throw new Error(
-        `Failed to get daily spo2: ${res.statusCode}\n${res.body}`
+        `Failed to get daily spo2: ${res.statusCode}\n${res.body}`,
       );
     }
 
@@ -146,7 +152,7 @@ export class Oura {
 
     if (!res.ok) {
       throw new Error(
-        `Failed to get daily stress: ${res.statusCode}\n${res.body}`
+        `Failed to get daily stress: ${res.statusCode}\n${res.body}`,
       );
     }
 
@@ -162,7 +168,7 @@ export class Oura {
 
     if (!res.ok) {
       throw new Error(
-        `Failed to get heartrate: ${res.statusCode}\n${res.body}`
+        `Failed to get heartrate: ${res.statusCode}\n${res.body}`,
       );
     }
 

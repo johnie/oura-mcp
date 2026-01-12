@@ -1,6 +1,7 @@
+import { RestServerTransport } from '@chatmcp/sdk/server/rest.js';
 import { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import { RestServerTransport } from '@chatmcp/sdk/server/rest.js';
+import type { Transport } from '@modelcontextprotocol/sdk/shared/transport.js';
 import { version } from '../package.json';
 import { Oura } from './oura';
 import { registerAllTools } from './tools';
@@ -22,16 +23,14 @@ registerAllTools(server, oura);
 const port = Number(process.env.PORT || '3000');
 
 export async function startServer(
-  options:
-    | { type: 'http'; endpoint: string }
-    | { type: 'stdio' }
+  options: { type: 'http'; endpoint: string } | { type: 'stdio' },
 ) {
   if (options.type === 'http') {
     const transport = new RestServerTransport({
       port,
       endpoint: options.endpoint,
     });
-    await server.connect(transport);
+    await server.connect(transport as unknown as Transport);
 
     await transport.startServer();
     console.log(`HTTP server: http://localhost:${port}${options.endpoint}`);

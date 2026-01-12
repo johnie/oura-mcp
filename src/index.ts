@@ -7,7 +7,7 @@ const cli = cac(`fetch-mcp`);
 cli
   .command('[...args]', 'Start server')
   .option('--http [endpoint]', 'Use HTTP transport (default endpoint: /mcp)')
-  .action(async (args, flags) => {
+  .action(async (_args, flags) => {
     await startServer(
       flags.http
         ? {
