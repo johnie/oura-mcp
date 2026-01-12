@@ -5,9 +5,18 @@ import { SSEServerTransport } from '@modelcontextprotocol/sdk/server/sse.js';
 import { RestServerTransport } from '@chatmcp/sdk/server/rest.js';
 import { version } from '../package.json';
 import { Oura, GeneralOuraSchemaShape } from './oura';
-import { dump } from 'js-yaml';
 import { errorToToolResult, truncateResponse } from './utils';
-import { z } from 'zod';
+import {
+  ResponseFormat,
+  responseFormatSchema,
+  formatPersonalInfo,
+  formatDailyActivity,
+  formatCardiovascularAge,
+  formatDailySleep,
+  formatDailySpo2,
+  formatDailyStress,
+  formatHeartrate,
+} from './formatters';
 
 const server = new McpServer({
   name: 'oura-mcp',
@@ -25,15 +34,19 @@ server.registerTool(
   {
     title: 'Get personal info from Oura',
     description: 'Get personal info from Oura',
+    inputSchema: {
+      response_format: responseFormatSchema,
+    },
   },
-  async () => {
+  async (args) => {
     try {
       const res = await oura.getPersonalInfo();
+      const format = args.response_format ?? ResponseFormat.JSON;
       return {
         content: [
           {
             type: 'text',
-            text: truncateResponse(dump(res)),
+            text: truncateResponse(formatPersonalInfo(res, format)),
           },
         ],
       };
@@ -57,7 +70,7 @@ server.registerTool(
         content: [
           {
             type: 'text',
-            text: truncateResponse(dump(res)),
+            text: truncateResponse(formatDailyActivity(res, args.response_format)),
           },
         ],
       };
@@ -81,7 +94,7 @@ server.registerTool(
         content: [
           {
             type: 'text',
-            text: truncateResponse(dump(res)),
+            text: truncateResponse(formatCardiovascularAge(res, args.response_format)),
           },
         ],
       };
@@ -105,7 +118,7 @@ server.registerTool(
         content: [
           {
             type: 'text',
-            text: truncateResponse(dump(res)),
+            text: truncateResponse(formatDailySleep(res, args.response_format)),
           },
         ],
       };
@@ -129,7 +142,7 @@ server.registerTool(
         content: [
           {
             type: 'text',
-            text: truncateResponse(dump(res)),
+            text: truncateResponse(formatDailySpo2(res, args.response_format)),
           },
         ],
       };
@@ -153,7 +166,7 @@ server.registerTool(
         content: [
           {
             type: 'text',
-            text: truncateResponse(dump(res)),
+            text: truncateResponse(formatDailyStress(res, args.response_format)),
           },
         ],
       };
@@ -177,7 +190,7 @@ server.registerTool(
         content: [
           {
             type: 'text',
-            text: truncateResponse(dump(res)),
+            text: truncateResponse(formatHeartrate(res, args.response_format)),
           },
         ],
       };
