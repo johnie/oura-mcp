@@ -4,6 +4,9 @@ import { z } from 'zod';
 // Date format regex for YYYY-MM-DD validation
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
 
+// Default number of results to return
+const DEFAULT_LIMIT = 50;
+
 export const GeneralOuraSchemaShape = {
   start_date: z
     .string()
@@ -14,6 +17,13 @@ export const GeneralOuraSchemaShape = {
     .regex(dateRegex, 'Date must be in YYYY-MM-DD format')
     .optional()
     .describe('End date in YYYY-MM-DD format (defaults to today if not provided)'),
+  limit: z
+    .number()
+    .int('Limit must be a whole number')
+    .min(1, 'Limit must be at least 1')
+    .max(200, 'Limit cannot exceed 200')
+    .default(DEFAULT_LIMIT)
+    .describe(`Maximum number of results to return (default: ${DEFAULT_LIMIT}, max: 200)`),
   next_token: z.string().optional().describe('Next token to fetch next page'),
 };
 
@@ -26,10 +36,11 @@ function getTodayDate(): string {
 }
 
 /** Apply request-time defaults to search params */
-function withDefaults(params: GeneralOuraOptions): Record<string, string> {
+function withDefaults(params: GeneralOuraOptions): Record<string, string | number> {
   return {
     start_date: params.start_date,
     end_date: params.end_date ?? getTodayDate(),
+    limit: params.limit ?? DEFAULT_LIMIT,
     ...(params.next_token ? { next_token: params.next_token } : {}),
   };
 }
