@@ -30,6 +30,7 @@ export async function startServer(
       port,
       endpoint: options.endpoint,
     });
+    // Cast needed: @chatmcp/sdk bundles an older MCP SDK with incompatible Transport type
     await server.connect(transport as unknown as Transport);
 
     await transport.startServer();
