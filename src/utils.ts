@@ -1,4 +1,5 @@
-import { CHARACTER_LIMIT } from './constants';
+/** Maximum response size in characters to prevent context bloating */
+const CHARACTER_LIMIT = 25000;
 
 /**
  * Format an error into an actionable, user-friendly message.
