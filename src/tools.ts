@@ -1,5 +1,4 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
-import type { PersonalInfo } from './formatters';
 import {
   formatCardiovascularAge,
   formatDailyActivity,
@@ -8,12 +7,12 @@ import {
   formatDailyStress,
   formatHeartrate,
   formatPersonalInfo,
-  ResponseFormat,
   responseFormatSchema,
-} from './formatters';
-import type { GeneralOuraOptions, Oura } from './oura';
-import { GeneralOuraSchemaShape } from './oura';
-import { errorToToolResult, truncateResponse } from './utils';
+} from './formatters.ts';
+import type { GeneralOuraOptions, Oura } from './oura.ts';
+import { GeneralOuraSchemaShape } from './oura.ts';
+import { ResponseFormat } from './types.ts';
+import { errorToToolResult, truncateResponse } from './utils.ts';
 
 // Standard annotations for read-only Oura data tools
 const readOnlyAnnotations = {
@@ -23,22 +22,19 @@ const readOnlyAnnotations = {
   openWorldHint: true,
 };
 
-type OuraMethod = (params: GeneralOuraOptions) => Promise<unknown>;
-type Formatter = (data: unknown, format: ResponseFormat) => string;
-
-interface ToolDefinition {
+interface TypedTool<T> {
   name: string;
   title: string;
   description: string;
-  method: OuraMethod;
-  formatter: Formatter;
+  method: (params: GeneralOuraOptions) => Promise<T>;
+  formatter: (data: T, format: ResponseFormat) => string;
 }
 
 /**
  * Register a standard Oura data tool with the MCP server.
  * Handles common logic: error handling, formatting, truncation.
  */
-function registerOuraTool(server: McpServer, oura: Oura, tool: ToolDefinition) {
+function registerTool<T>(server: McpServer, tool: TypedTool<T>) {
   server.registerTool(
     tool.name,
     {
@@ -49,7 +45,7 @@ function registerOuraTool(server: McpServer, oura: Oura, tool: ToolDefinition) {
     },
     async (args) => {
       try {
-        const res = await tool.method.call(oura, args);
+        const res = await tool.method(args);
         return {
           content: [
             {
@@ -98,9 +94,7 @@ Use when: User asks about their Oura profile, account info, or personal metrics.
           content: [
             {
               type: 'text',
-              text: truncateResponse(
-                formatPersonalInfo(res as PersonalInfo, format),
-              ),
+              text: truncateResponse(formatPersonalInfo(res, format)),
             },
           ],
         };
@@ -110,12 +104,11 @@ Use when: User asks about their Oura profile, account info, or personal metrics.
     },
   );
 
-  // Standard data tools using factory pattern
-  const tools: ToolDefinition[] = [
-    {
-      name: 'oura_get_daily_activity',
-      title: 'Get daily activity from Oura',
-      description: `Fetch daily activity data from Oura Ring.
+  // Standard data tools using generic typed registration
+  registerTool(server, {
+    name: 'oura_get_daily_activity',
+    title: 'Get daily activity from Oura',
+    description: `Fetch daily activity data from Oura Ring.
 
 Returns activity metrics including:
 - Activity score (0-100) and contributor scores
@@ -131,13 +124,14 @@ Args:
   - response_format ('json' | 'markdown'): Output format (default: 'json')
 
 Use when: User asks about daily activity, steps, calories, movement, or exercise patterns.`,
-      method: oura.getDailyActivity,
-      formatter: formatDailyActivity as Formatter,
-    },
-    {
-      name: 'oura_get_daily_cardiovascular_age',
-      title: 'Get daily cardiovascular age from Oura',
-      description: `Fetch cardiovascular age estimates from Oura Ring.
+    method: (p) => oura.getDailyActivity(p),
+    formatter: formatDailyActivity,
+  });
+
+  registerTool(server, {
+    name: 'oura_get_daily_cardiovascular_age',
+    title: 'Get daily cardiovascular age from Oura',
+    description: `Fetch cardiovascular age estimates from Oura Ring.
 
 Returns vascular health metrics including:
 - Estimated vascular age (in years)
@@ -152,13 +146,14 @@ Args:
   - response_format ('json' | 'markdown'): Output format (default: 'json')
 
 Use when: User asks about heart health, cardiovascular age, or vascular fitness.`,
-      method: oura.getDailyCardiovascularAge,
-      formatter: formatCardiovascularAge as Formatter,
-    },
-    {
-      name: 'oura_get_daily_sleep',
-      title: 'Get daily sleep from Oura',
-      description: `Fetch daily sleep summary data from Oura Ring.
+    method: (p) => oura.getDailyCardiovascularAge(p),
+    formatter: formatCardiovascularAge,
+  });
+
+  registerTool(server, {
+    name: 'oura_get_daily_sleep',
+    title: 'Get daily sleep from Oura',
+    description: `Fetch daily sleep summary data from Oura Ring.
 
 Returns sleep metrics including:
 - Sleep score (0-100) and contributor scores
@@ -175,13 +170,14 @@ Args:
   - response_format ('json' | 'markdown'): Output format (default: 'json')
 
 Use when: User asks about sleep quality, sleep duration, sleep scores, or sleep patterns.`,
-      method: oura.getDailySleep,
-      formatter: formatDailySleep as Formatter,
-    },
-    {
-      name: 'oura_get_daily_spo2',
-      title: 'Get daily SPO2 from Oura',
-      description: `Fetch blood oxygen saturation (SpO2) data from Oura Ring.
+    method: (p) => oura.getDailySleep(p),
+    formatter: formatDailySleep,
+  });
+
+  registerTool(server, {
+    name: 'oura_get_daily_spo2',
+    title: 'Get daily SPO2 from Oura',
+    description: `Fetch blood oxygen saturation (SpO2) data from Oura Ring.
 
 Returns oxygen metrics including:
 - Average SpO2 percentage during sleep
@@ -196,13 +192,14 @@ Args:
   - response_format ('json' | 'markdown'): Output format (default: 'json')
 
 Use when: User asks about blood oxygen, SpO2 levels, or breathing during sleep.`,
-      method: oura.getDailySpo2,
-      formatter: formatDailySpo2 as Formatter,
-    },
-    {
-      name: 'oura_get_daily_stress',
-      title: 'Get daily stress from Oura',
-      description: `Fetch daily stress and recovery data from Oura Ring.
+    method: (p) => oura.getDailySpo2(p),
+    formatter: formatDailySpo2,
+  });
+
+  registerTool(server, {
+    name: 'oura_get_daily_stress',
+    title: 'Get daily stress from Oura',
+    description: `Fetch daily stress and recovery data from Oura Ring.
 
 Returns stress metrics including:
 - High stress time (minutes)
@@ -219,13 +216,14 @@ Args:
   - response_format ('json' | 'markdown'): Output format (default: 'json')
 
 Use when: User asks about stress levels, recovery, or daily stress patterns.`,
-      method: oura.getDailyStress,
-      formatter: formatDailyStress as Formatter,
-    },
-    {
-      name: 'oura_get_heartrate',
-      title: 'Get heartrate from Oura',
-      description: `Fetch heart rate time-series data from Oura Ring.
+    method: (p) => oura.getDailyStress(p),
+    formatter: formatDailyStress,
+  });
+
+  registerTool(server, {
+    name: 'oura_get_heartrate',
+    title: 'Get heartrate from Oura',
+    description: `Fetch heart rate time-series data from Oura Ring.
 
 Returns heart rate readings including:
 - BPM (beats per minute) measurements
@@ -241,13 +239,7 @@ Args:
   - response_format ('json' | 'markdown'): Output format (default: 'json'). Use 'markdown' for summary stats.
 
 Use when: User asks about heart rate, BPM, resting heart rate, or heart rate trends.`,
-      method: oura.getHeartrate,
-      formatter: formatHeartrate as Formatter,
-    },
-  ];
-
-  // Register all standard tools
-  for (const tool of tools) {
-    registerOuraTool(server, oura, tool);
-  }
+    method: (p) => oura.getHeartrate(p),
+    formatter: formatHeartrate,
+  });
 }
