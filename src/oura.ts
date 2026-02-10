@@ -1,6 +1,16 @@
 import { type Got, got } from 'got';
 import { z } from 'zod';
-import { responseFormatSchema } from './formatters';
+import { responseFormatSchema } from './formatters.ts';
+import type {
+  CardiovascularAge,
+  DailyActivity,
+  DailySleep,
+  DailySpo2,
+  DailyStress,
+  HeartrateRecord,
+  PaginatedResponse,
+  PersonalInfo,
+} from './types.ts';
 
 // Date format regex for YYYY-MM-DD validation
 const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
@@ -53,8 +63,18 @@ function withDefaults(
   };
 }
 
+const ENDPOINTS = {
+  personalInfo: 'usercollection/personal_info',
+  dailyActivity: 'usercollection/daily_activity',
+  dailyCardiovascularAge: 'usercollection/daily_cardiovascular_age',
+  dailySleep: 'usercollection/daily_sleep',
+  dailySpo2: 'usercollection/daily_spo2',
+  dailyStress: 'usercollection/daily_stress',
+  heartrate: 'usercollection/heartrate',
+} as const;
+
 export class Oura {
-  got: Got;
+  private got: Got;
 
   constructor(apiKey: string) {
     this.got = got.extend({
@@ -65,113 +85,73 @@ export class Oura {
     });
   }
 
-  async getPersonalInfo() {
-    const request = this.got.get('usercollection/personal_info');
-
-    const [res, json] = await Promise.all([request, request.json()]);
-
-    if (!res.ok) {
-      throw new Error(
-        `Failed to get personal info: ${res.statusCode}\n${res.body}`,
-      );
-    }
-
-    return json;
-  }
-
-  async getDailyActivity(searchParams: GeneralOuraOptions) {
-    const request = this.got.get('usercollection/daily_activity', {
-      searchParams: withDefaults(searchParams),
+  private async fetch<T>(
+    endpoint: string,
+    label: string,
+    searchParams?: Record<string, string | number>,
+  ): Promise<T> {
+    const request = this.got.get(endpoint, {
+      ...(searchParams ? { searchParams } : {}),
     });
 
     const [res, json] = await Promise.all([request, request.json()]);
 
     if (!res.ok) {
-      throw new Error(
-        `Failed to get daily activity: ${res.statusCode}\n${res.body}`,
-      );
+      throw new Error(`Failed to get ${label}: ${res.statusCode}\n${res.body}`);
     }
 
-    return json;
+    return json as T;
   }
 
-  async getDailyCardiovascularAge(searchParams: GeneralOuraOptions) {
-    const request = this.got.get('usercollection/daily_cardiovascular_age', {
-      searchParams: withDefaults(searchParams),
-    });
-
-    const [res, json] = await Promise.all([request, request.json()]);
-
-    if (!res.ok) {
-      throw new Error(
-        `Failed to get daily cardiovascular age: ${res.statusCode}\n${res.body}`,
-      );
-    }
-
-    return json;
+  getPersonalInfo() {
+    return this.fetch<PersonalInfo>(ENDPOINTS.personalInfo, 'personal info');
   }
 
-  async getDailySleep(searchParams: GeneralOuraOptions) {
-    const request = this.got.get('usercollection/daily_sleep', {
-      searchParams: withDefaults(searchParams),
-    });
-
-    const [res, json] = await Promise.all([request, request.json()]);
-
-    if (!res.ok) {
-      throw new Error(
-        `Failed to get daily sleep: ${res.statusCode}\n${res.body}`,
-      );
-    }
-
-    return json;
+  getDailyActivity(params: GeneralOuraOptions) {
+    return this.fetch<PaginatedResponse<DailyActivity>>(
+      ENDPOINTS.dailyActivity,
+      'daily activity',
+      withDefaults(params),
+    );
   }
 
-  async getDailySpo2(searchParams: GeneralOuraOptions) {
-    const request = this.got.get('usercollection/daily_spo2', {
-      searchParams: withDefaults(searchParams),
-    });
-
-    const [res, json] = await Promise.all([request, request.json()]);
-
-    if (!res.ok) {
-      throw new Error(
-        `Failed to get daily spo2: ${res.statusCode}\n${res.body}`,
-      );
-    }
-
-    return json;
+  getDailyCardiovascularAge(params: GeneralOuraOptions) {
+    return this.fetch<PaginatedResponse<CardiovascularAge>>(
+      ENDPOINTS.dailyCardiovascularAge,
+      'daily cardiovascular age',
+      withDefaults(params),
+    );
   }
 
-  async getDailyStress(searchParams: GeneralOuraOptions) {
-    const request = this.got.get('usercollection/daily_stress', {
-      searchParams: withDefaults(searchParams),
-    });
-
-    const [res, json] = await Promise.all([request, request.json()]);
-
-    if (!res.ok) {
-      throw new Error(
-        `Failed to get daily stress: ${res.statusCode}\n${res.body}`,
-      );
-    }
-
-    return json;
+  getDailySleep(params: GeneralOuraOptions) {
+    return this.fetch<PaginatedResponse<DailySleep>>(
+      ENDPOINTS.dailySleep,
+      'daily sleep',
+      withDefaults(params),
+    );
   }
 
-  async getHeartrate(searchParams: GeneralOuraOptions) {
-    const request = this.got.get('usercollection/heartrate', {
-      searchParams: withDefaults(searchParams),
-    });
+  getDailySpo2(params: GeneralOuraOptions) {
+    return this.fetch<PaginatedResponse<DailySpo2>>(
+      ENDPOINTS.dailySpo2,
+      'daily spo2',
+      withDefaults(params),
+    );
+  }
 
-    const [res, json] = await Promise.all([request, request.json()]);
+  getDailyStress(params: GeneralOuraOptions) {
+    return this.fetch<PaginatedResponse<DailyStress>>(
+      ENDPOINTS.dailyStress,
+      'daily stress',
+      withDefaults(params),
+    );
+  }
 
-    if (!res.ok) {
-      throw new Error(
-        `Failed to get heartrate: ${res.statusCode}\n${res.body}`,
-      );
-    }
-
-    return json;
+  getHeartrate(params: GeneralOuraOptions) {
+    return this.fetch<PaginatedResponse<HeartrateRecord>>(
+      ENDPOINTS.heartrate,
+      'heartrate',
+      withDefaults(params),
+    );
   }
 }
